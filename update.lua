@@ -1,6 +1,6 @@
 -- Update
 local wifi = require("internet")
-lnk = "http://raw.githubusercontent.com/DragoNext/DragoOS/main/"
+lnk = "https://raw.githubusercontent.com/DragoNext/DragoOS/main/"
 upd = {"dragoos.lua","update.lua"}
 for i = 1,2
 do 
