@@ -1,5 +1,5 @@
 -- dragos
-local gpu = require("gpu")
+local gpu = require("component").gpu
 local internet = require("internet")
 local io = require("io")
 
