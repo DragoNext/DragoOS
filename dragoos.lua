@@ -16,19 +16,18 @@ local dragoos_double_buffering = false -- turned on or off
 local dragoos_
 
 function switch_buffering () 
-	if dragoos_double_buffering == false then 
-		dragoos_double_buffering = true 
-	else
-		dragoos_double_buffering = false 
-	end 
+    if dragoos_double_buffering == false then 
+        dragoos_double_buffering = true 
+    else
+        dragoos_double_buffering = false 
+    end 
 end 
 
 function os_startup ()
-	
-	for i = 1,screen_ysize 
+    for i = 1,screen_ysize 
 	do 
-		gpu.fill(0,0+i,screen_xsize,1)
-	end 
+        gpu.fill(0,0+i,screen_xsize,1)
+    end 
 end 
 
 os_startup()
