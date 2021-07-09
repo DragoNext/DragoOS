@@ -7,7 +7,7 @@ local io = require("io")
 local screen_adress = gpu.getScreen() -- Current Screen #
 local max_color_depth = gpu.maxDepth() -- Current max color depth (depends on screen)
 
-local screen_xsize, local screen_ysize  = gpu.getResolution() -- Width 
+local screen_xsize, screen_ysize  = gpu.getResolution() -- Width 
 
 local dragoos_theme = 0 -- Theme index 
 
