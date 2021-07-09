@@ -7,13 +7,12 @@ local io = require("io")
 local screen_adress = gpu.getScreen() -- Current Screen #
 local max_color_depth = gpu.maxDepth() -- Current max color depth (depends on screen)
 
-local screen_xsize = gpu.getResolution()[0] -- Width 
-local screen_ysize = gpu.getResolution()[1]
+local screen_xsize, local screen_ysize  = gpu.getResolution() -- Width 
 
 local dragoos_theme = 0 -- Theme index 
 
 local dragoos_double_buffering = false -- turned on or off 
-local dragoos_
+local dragoos_ = 0
 
 function switch_buffering () 
     if dragoos_double_buffering == false then 
