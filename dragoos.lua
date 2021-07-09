@@ -16,7 +16,7 @@ local dragoos_double_buffering = false -- turned on or off
 local dragoos_
 
 function switch_buffering () 
-	if dragoos_double_buffering is false then 
+	if dragoos_double_buffering == false then 
 		dragoos_double_buffering = true 
 	else
 		dragoos_double_buffering = false 
