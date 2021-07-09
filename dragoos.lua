@@ -26,7 +26,7 @@ end
 function os_startup ()
     for i = 1,screen_ysize 
 	do 
-        gpu.fill(0,0+i,screen_xsize,1)
+        gpu.fill(0,0+i,screen_xsize,1,"#")
     end 
 end 
 
