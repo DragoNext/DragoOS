@@ -9,7 +9,7 @@ do
 	for chunk in handle do result = result..chunk end 
 	print(upd[i].." Updated")
 	file = io.open(upd[i],"w")
-	file.write(result)
-	file.close()
+	file:write(result)
+	file:close()
 end 
 
