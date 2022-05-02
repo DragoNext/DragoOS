@@ -155,6 +155,10 @@ function event_loop()
 					command = load(console) 
 					_,console_return = pcall(command) 
 					console_return = tostring(_)..tostring(console_return)
+					if console_return == "attempt to call a nil value" do 
+						console_return = load("print("..console..")")()
+					end 
+					
 					table.insert(console_log, console_return)
 					console = "" 
 				end 
