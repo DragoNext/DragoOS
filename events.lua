@@ -154,9 +154,8 @@ function event_loop()
 				elseif x == 13 then 
 					command = load(console) 
 					_,console_return = pcall(command) 
-					console_return = tostring(console_return)
+					console_return = tostring(console).." | "..tostring(console_return)
 					table.insert(console_log, console_return)
-					table.insert(console_log, console_return) -- idk any more ;-; why it dosen't want to give normal output of print("kurwa")  
 					console = "" 
 				end 
 			end 
