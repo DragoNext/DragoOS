@@ -160,6 +160,7 @@ function event_loop()
 							crt = crt .." "..v 
 						end 
 						console_return = crt 
+					end
 					console_return = tostring(console).." | "..tostring(console_return)
 					table.insert(console_log, console_return)
 					console = "" 
