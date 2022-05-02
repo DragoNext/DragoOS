@@ -128,6 +128,10 @@ function draw_wallpaper ()
     setcolor(0x800080)
     gpu.fill(0,-1,screen_xsize,screen_ysize+4,' ')
 end 
+
+function create_window_settings ()
+	add_window(10,10,20,6,"Ustawienia",{"rect",0,0,10,1,0xff0000},false) 
+end 
  
 function draw_ui () 
 	setcolor(0x000000)
@@ -155,6 +159,7 @@ function draw_ui ()
 		gpu.set(12,screen_ysize-7,"Aplikacje")
 		gpu.set(0,screen_ysize-12,"_________________________________")
 		gpu.set(10,screen_ysize-10,"DragoAppStore")
+		add_event("touch",{0,screen_ysize-3,26,2,create_window_settings})
 		fsetcolor(0xffffff)
     end 
 	if rc_menuactive == true then
@@ -243,6 +248,8 @@ add_event("touch",{0,47,6,6,set_uimenuactive})
 add_event("touch",{155,47,6,6,exit_os})
 
 
+
+
 function draw_items () 
 	for _id ,vars in pairs(items) do
 		types = vars[1]
@@ -281,6 +288,7 @@ function draw_items ()
 					gpu.fill()
 				end	
 				if tab[1] == "checkbox" then 
+					-- add_event("touch",{vars[2]+tab[2],vars[3]+tab[3],1,1,ACTIVATED_EVENT})
 				end 
 			end
 			
