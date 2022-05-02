@@ -251,7 +251,10 @@ add_event("touch",{155,47,6,6,exit_os})
 
 
 function draw_items () 
+	x = 0 
 	for _id ,vars in pairs(items) do
+		gpu.set(0,0+x,tab)
+		x = x + 1
 		types = vars[1]
 		if types == "point" then 
 			setcolor(vars[4])
@@ -273,6 +276,7 @@ function draw_items ()
 			setcolor(0x00fa00)
 			gpu.set(vars[2]+vars[4]-2,vars[3],"-")
 			for _,tab in pairs(vars[7]) do  
+				
 				if tab[1] == "rect" then 
 					setcolor(tab[6])
 					gpu.fill(vars[2]+tab[2],vars[3]+tab[3],tab[4],tab[5]," ")
