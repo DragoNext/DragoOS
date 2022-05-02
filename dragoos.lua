@@ -287,9 +287,9 @@ function draw_items ()
 					fsetcolor(tab[8]) 
 					gpu.fill()
 				end	
-				if tab[1] == "checkbox" then 
+				--if tab[1] == "checkbox" then 
 					-- add_event("touch",{vars[2]+tab[2],vars[3]+tab[3],1,1,ACTIVATED_EVENT})
-				end 
+				--end 
 			end
 			
 		end 
