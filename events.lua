@@ -154,6 +154,12 @@ function event_loop()
 				elseif x == 13 then 
 					command = load(console) 
 					_,console_return = pcall(command) 
+					if type(console_return) == "table":
+						crt = ""
+						for k, v in pairs(console_return) do 
+							crt = crt .." "..v 
+						end 
+						console_return = crt 
 					console_return = tostring(console).." | "..tostring(console_return)
 					table.insert(console_log, console_return)
 					console = "" 
