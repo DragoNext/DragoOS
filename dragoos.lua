@@ -254,9 +254,7 @@ add_event("touch",{155,47,6,6,exit_os})
 
 
 function draw_items () 
-	x = 0 
 	for _id ,vars in pairs(items) do
-		gpu.set(0,0+x,tab)
 		x = x + 1
 		types = vars[1]
 		if types == "point" then 
