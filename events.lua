@@ -154,12 +154,9 @@ function event_loop()
 				elseif x == 13 then 
 					command = load(console) 
 					_,console_return = pcall(command) 
-					console_return = tostring(_)..tostring(console_return)
-					if console_return == "attempt to call a nil value" then 
-						console_return = load("print("..console..")")()
-					end 
-					
+					console_return = tostring(console_return)
 					table.insert(console_log, console_return)
+					table.insert(console_log, console_return) -- idk any more ;-; why it dosen't want to give normal output of print("kurwa")  
 					console = "" 
 				end 
 			end 
