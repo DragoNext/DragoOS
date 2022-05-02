@@ -4,7 +4,7 @@ lnk = cz
 upd = {"https://raw.githubusercontent.com/DragoNext/DragoOS/main/dragoos.lua" ,"https://raw.githubusercontent.com/DragoNext/DragoOS/main/update.lua","https://raw.githubusercontent.com/DragoNext/DragoOS/main/events.lua","https://raw.githubusercontent.com/DragoNext/DragoOS/main/network.lua","https://raw.githubusercontent.com/DragoNext/DragoOS/main/update.lua","https://raw.githubusercontent.com/DragoNext/DragoOS/main/events.lua","https://raw.githubusercontent.com/DragoNext/DragoOS/main/energyparser.lua",
 "https://raw.githubusercontent.com/DragoNext/DragoOS/main/dragop.lua"}
 names = {"dragoos.lua","update.lua","events.lua","network.lua","energyparser.lua","dragop.lua"}
-for i = 1,2
+for i = 1,6
 do 
 	local handle = wifi.request(upd[i])
 	local result = ""
