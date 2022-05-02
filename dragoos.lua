@@ -1,18 +1,60 @@
--- dragos
--- 0.003
+--                          ██
+--                  ██    ██
+--          █████████████  ████                        ███████
+--      ████  ███████████████                          █████████
+--  ██████    █████████     ██   ████                  █      ███
+--  ████████████████████████     ██████                █       ██
+--    ██████  ██    ██████         ██████              █       ██
+--    ██      ████      ██████   ████████              █       ██
+--            ██        ██████   ██████████            █      ███
+--        ██  ██        ██████   ██████████            ████████
+--          ██        ██████   ██████████████          ████████
+--                ██████████ ██    ████  ████
+--        █████████████████  ████████████████          ████████
+--  ██████████████████████ ██████    ████████          █████████
+-- ███████████████████   ████████████████████          █       ██
+--██████████████  ██  ███  ████    ██████  ██          █        ██
+--██  ████████    ██  ███████  ██████████  ██          ██████████
+--█  ████████            ██  ████████████   █          █████
+--   ██████    ████        ██          ██              ██ ███
+--  ██████       ████                    ██            ██  ███               █████████
+--  ███████       ████  ████████████████               ██   ███             ██       ██
+--  ████████      █████████████████████                                     ██       ██
+--   ████████████████████████████████████                ███████            ██       ██
+--     ███████████████████         ████████             ███   ███           ██       ██
+--       █████████████         ██    ██████            ███     ███          ██       ██
+--         ██████            ██████  ████████          ███████████           █████████
+--           ██            ██████    ████████          ███████████
+--                          █████████████  ██          ██       ██          ███████████
+--         ██████████████████████████████   █          ██       ██          ██
+--     ███████    █████████████████  ██                                     ██
+--   ████              ██████      ██                   ██████████          ███████████
+--   ██  ██              ██                            ███                           ██
+-- ██  ██                                              ███   █████                   ██
+--   ██           ██  ████████████                     ███      ██          ███████████
+--   ██   ███      ██  ████       ██                   ███      ██
+-- ██    ███████  ██████         ███                    ██████████
+-- ████  ██  █████████         ████
+-- ██████  █████████████                                ████████
+--   ███████████████  ████                             ██      ██
+--     ███████████                                     ██      ██
+--              ██                                     ██      ██
+--                                                     ██      ██
+--                                                      ████████
+-- Bugs:
+--  	Add_event causes  events.lua to not works [V] Repaired it :3 Also improved clearing vars when closing
+-- 
 local gpu = require("component").gpu
 local internet = require("internet")
 local io = require("io")
-local event = require "event"
+local event = require("event")
 local thread = require("thread")
 local banned_player = {"Majkaaa"}
-
 local modules_list = {}
-
 modules_list["charset"] = "nVf9B9dQ"
-
+modules_list["events"] = "" -- Not added to pastebin yett
 items = {}  
-
+console = ""
 random = math.random -- Fuck math isnt imported globally
 
 
@@ -41,41 +83,38 @@ function install_module (mod)
 		_load_module(mod)
 	end 
 end 
-
+install_module("events")
 install_module("charset")
 
- 
+
 local screen_adress = gpu.getScreen() -- Current Screen #
 local max_color_depth = gpu.maxDepth() -- Current max color depth (depends on screen)
- 
 local screen_xsize, screen_ysize  = gpu.getResolution() -- Width 
- 
 local dragoos_theme = 0 -- Theme index 
- 
 local dragoos_double_buffering = true -- turned on or off 
-
 local buffer_1 = gpu.allocateBuffer(screen_xsize,screen_ysize+1)
 local buffer_2 = gpu.allocateBuffer(screen_xsize,screen_ysize+1)
 local dragoos_currentbuffer = buffer_1 
 
-local ui_menuactive = false 
 local ui_hide = false 
-
-
-
+dragos_exit = false 
+ui_menuactive = false 
+rc_menuactive = false 
+rc_x = 0
+rc_y = 0 
 local color_themes = {
 {0x00ff00,0x00ff00,0x00ff00}
 }
 
 local windows = {}
 
-
- 
 function setcolor (color)
     gpu.setBackground(color)
+end
+
+function fsetcolor (color) --  Foreground SetColor
+    gpu.setForeground(color)
 end 
- 
- 
  
 function switch_buffering () 
     if dragoos_double_buffering == false then 
@@ -84,8 +123,6 @@ function switch_buffering ()
         dragoos_double_buffering = false 
     end 
 end 
- 
- 
  
 function draw_wallpaper () 
     setcolor(0x800080)
@@ -97,7 +134,11 @@ function draw_ui ()
 	gpu.fill(0,0,0,screen_xsize," ") -- Top bar 
     setcolor(0x00aa00)
     gpu.fill(0,screen_ysize-2,screen_xsize+1,screen_ysize+1," ") -- taskbar 
-    setcolor(0x0000ff) 
+	fsetcolor(0x000000)
+	setcolor(0x800080) --Wallpaper bottom color
+	gpu.set(0,screen_ysize-3,string.rep("_",160))-- taskbar black shadow
+    fsetcolor(0xffffff)
+	setcolor(0x0000ff) 
     gpu.fill(1,screen_ysize-2,5,screen_ysize-1," ") -- menu
     gpu.set(1,screen_ysize-1,"Menu")
     setcolor(0xff0000)
@@ -106,10 +147,31 @@ function draw_ui ()
     if ui_menuactive == true then
 		setcolor(0xffffff)
         gpu.fill(0,screen_ysize-19,33,17," ")
+		fsetcolor(0x000000)
+		gpu.set(1,screen_ysize-19,"DragoOS v0.1")
+		gpu.set(0,screen_ysize-6,"_________________________________")
+		gpu.set(12,screen_ysize-4,"Ustawienia")
+		gpu.set(0,screen_ysize-9,"_________________________________")
+		gpu.set(12,screen_ysize-7,"Aplikacje")
+		gpu.set(0,screen_ysize-12,"_________________________________")
+		gpu.set(10,screen_ysize-10,"DragoAppStore")
+		fsetcolor(0xffffff)
     end 
-    setcolor(0xff0000)
-	
-	gpu.set(screen_xsize-20,screen_ysize-1,tostring(date))----------------------------------------------------------------------------------------------------------------------
+	if rc_menuactive == true then
+		setcolor(0xffffff)
+		fsetcolor(0x000000)
+		gpu.set(rc_x+1,rc_y-1,"Refresh   ")
+		gpu.set(rc_x+1,rc_y-2,"New       ")
+		if rc_onfile == true then 
+			gpu.set(rc_x+1,rc_y-3,"Delete    ")
+			gpu.set(rc_x+1,rc_y-4,"Rename    ")
+			gpu.set(rc_x+1,rc_y-5,"Propreties")
+		end 
+		fsetcolor(0xffffff)
+	end 
+	setcolor(0x00aa00)
+	gpu.set(screen_xsize-15,screen_ysize-1,tostring(os.date("%H:%M:%S")))
+	setcolor(0xff0000)
 end 
  
 function create_window()
@@ -123,7 +185,6 @@ end
 function draw_windows ()
 end 
  
- 
 function switch_buffer () 
 	if gpu.getActiveBuffer() == buffer_1 then 
 		gpu.setActiveBuffer(buffer_2)
@@ -133,9 +194,8 @@ function switch_buffer ()
 		dragoos_currentbuffer = buffer_1
 	end 
 end 
- 
 
- 
+
  
 function os_startup ()
     for i = 1,screen_ysize 
@@ -150,11 +210,37 @@ function add_point (x,y,color, l)
 	items[tostring(random(0, 0xffff))] = {"point",x,y,color,l} 
 end 
 
-function add_window (x,y,w,h,title)
-	items[tostring(random(0, 0xffff))] = {"window", x,y,w,h,title}
+function add_window (x,y,w,h,title,inside)
+	items[tostring(random(0, 0xffff))] = {"window", x,y,w,h,title,inside,false}
+	-- Last arg is if its dragged 
+end 
+
+function add_button (x,y,w,h,text,color,fcolor,onclick)
+	items[tostring(random(0, 0xffff))] = {"button", x,y,w,h,text,color,fcolor,onclick}
+end 
+
+function nowindow_drag()
+	-- disabless all window drags 
+	for _id ,vars in pairs(items) do
+		if vars[1] == "window" then 
+			vars[8] = false 
+		end 
+	end 
 end 
 
 
+-- EVENTS 
+
+function set_uimenuactive(x,y)
+	if ui_menuactive == true then 
+		ui_menuactive = false 
+	elseif ui_menuactive == false then 
+		ui_menuactive = true 
+	end     
+end 
+function exit_os(x,y);dragos_exit = true;end  
+add_event("touch",{0,47,6,6,set_uimenuactive})
+add_event("touch",{155,47,6,6,exit_os})
 
 
 function draw_items () 
@@ -163,62 +249,65 @@ function draw_items ()
 		if types == "point" then 
 			setcolor(vars[4])
 			gpu.set(vars[2],vars[3],vars[5])
+		elseif types == "button" then 
+			setcolor(vars[7])
+			fsetcolor(vars[8]) 
+			gpu.fill(vars[2],vars[3],vars[4],vars[5]," ")
+			gpu.set(vars[2],vars[3]+math.floor((vars[5]/2)-0.5),vars[6])
+			add_event("touch",{vars[2],vars[3],vars[4],vars[5],vars[9]})
 		elseif types == "window" then 
-			-- draw window 
+			setcolor(0xefefef)
+			gpu.fill(vars[2],vars[3],vars[4],vars[5]," ")
+			setcolor(0x5a5a5a)
+			gpu.fill(vars[2],vars[3],vars[4],1," ")
+			gpu.set(vars[2],vars[3],vars[6])
+			setcolor(0xfa0000)
+			gpu.set(vars[2]+vars[4]-1,vars[3],"X")
+			setcolor(0x00fa00)
+			gpu.set(vars[2]+vars[4]-2,vars[3],"-")
+			for _,tab in pairs(vars[7]) do  
+				if tab[1] == "rect" then 
+					setcolor(tab[6])
+					gpu.fill(vars[2]+tab[2],vars[3]+tab[3],tab[4],tab[5]," ")
+				end
+				if tab[1] == "text" then 
+					fsetcolor(tab[5])
+					gpu.set(vars[2]+tab[2],vars[3]+tab[3],tab[4])
+				end
+				if tab[1] == "button" then 
+					-- tab[1] -  x   {"button", x,y,w,h,text,color,fcolor,onclick}
+					setcolor(tab[7])
+					fsetcolor(tab[8]) 
+					gpu.fill()
+				end	
+				if tab[1] == "checkbox" then 
+				end 
+			end
+			
 		end 
 	end
 end 
- 
- 
-function event_loop()
-	-- to do - Move Click into this 
-	while true do 
-	
-		type_, adress_, x,y, _whatisthat, username = event.pull() -- Lastest event 
-		
-		
-		
-		if  type_ == "touch" then 
-			color = 0xff0000
-			if username == "Majkaaa" then 
-				color = 0xff0000
-			else 
-				color = 0x4B0082
-			end 
 
-			add_point(x,y,color,"X - "..x..","..y)
-
-
-			if (y > 47 and y < 50) then 
-				if (x > 0 and x < 6) then
-					if ui_menuactive == true then 
-						ui_menuactive = false 
-					elseif ui_menuactive == false then 
-						ui_menuactive = true 
-					end     
-				end 
-			end 
-		end
-
-	end 
-end 
 
 thread.create(event_loop):detach()
- 
- 
- 
-function add_event(type_,trg)
-	-- Type > Drag, Drop, Touch
-	-- Trg > Triggers (function) 
-	
-	
-	
-	
-end  
+
+function get_time()
+	H = tonumber(os.date("%H"))
+	M = tonumber(os.date("%M"))-40
+	if M > 60 then 
+		M = M - 60
+		H = H + 1
+	elseif M < 0 then 
+		H = H - 1 
+		M = M + 60 
+	end 
+	return H..":"..M 
+end 
+
  
  
 
-while true do
+while (dragos_exit == false) do
 	if dragoos_double_buffering == true then 
 		switch_buffer() 
 	end 
@@ -231,20 +320,32 @@ while true do
     draw_ui()
 	
 	
+	gpu.set(1,10,tostring(start_console))
+
 	
-	x=0
-	for k,v in pairs(items) do
-		gpu.set(1,1+x,tostring(k))
-		gpu.set(22,1+x,tostring(v[1]))
-		x = x + 1
+	if start_console == true then
+		setcolor(0x006400)
+		gpu.fill(0,0,160,51," ") 
+		
+		l=0 
+		for _, v in pairs(console_log) do 
+			gpu.set(1,1+l,v)
+			l = l  + 1
+		end 
+		gpu.set(1,1+l,">"..console)
+		l = l + 1
+		gpu.set(1,1+l,console_return)
 	end 
 
 	local end_time = os.time() - start_time
 	
-	gpu.set(5,5,tostring(end_time))
-	gpu.set(6,6,tostring( ui_menuactive ))
 	
 	gpu.bitblt(0, 0,0 ,screen_xsize, screen_ysize+1, dragoos_currentbuffer, 0, 0)
 	
     os.sleep(0)
 end 
+gpu.freeBuffer(buffer_1)
+gpu.freeBuffer(buffer_2)
+gpu.setActiveBuffer(0)
+items = {} -- cleans items on exit 
+os.execute("cls")
