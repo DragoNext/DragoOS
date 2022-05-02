@@ -102,6 +102,8 @@ ui_menuactive = false
 rc_menuactive = false 
 rc_x = 0
 rc_y = 0 
+
+ev_x_1 = false 
 local color_themes = {
 {0x00ff00,0x00ff00,0x00ff00}
 }
@@ -159,7 +161,7 @@ function draw_ui ()
 		gpu.set(12,screen_ysize-7,"Aplikacje")
 		gpu.set(0,screen_ysize-12,"_________________________________")
 		gpu.set(10,screen_ysize-10,"DragoAppStore")
-		add_event("touch",{0,screen_ysize-3,26,2,create_window_settings})
+		ev_x_1 = add_event("touch",{0,screen_ysize-3,26,2,create_window_settings})
 		fsetcolor(0xffffff)
     end 
 	if rc_menuactive == true then
@@ -239,6 +241,7 @@ end
 function set_uimenuactive(x,y)
 	if ui_menuactive == true then 
 		ui_menuactive = false 
+		delete_event(ev_x_1)
 	elseif ui_menuactive == false then 
 		ui_menuactive = true 
 	end     
