@@ -132,7 +132,7 @@ function draw_wallpaper ()
 end 
 
 function create_window_settings ()
-	add_window(10,10,20,6,"Ustawienia",{"rect",0,0,10,1,0xff0000},false) 
+	add_window(10,10,20,6,"Ustawienia",{{"rect",0,0,10,1,0xff0000}})  -- Fucking retarded me 
 end 
  
 function draw_ui () 
