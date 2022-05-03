@@ -131,7 +131,7 @@ function draw_wallpaper ()
     gpu.fill(0,-1,screen_xsize,screen_ysize+4,' ')
 end 
 
-function create_window_settings ()
+function create_window_settings (x,y)
 	add_window(10,10,20,6,"Ustawienia",{{"rect",0,0,10,1,0xff0000}})  -- Fucking retarded me 
 end 
  
