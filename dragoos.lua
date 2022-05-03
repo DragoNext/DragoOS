@@ -125,6 +125,19 @@ function switch_buffering ()
         dragoos_double_buffering = false 
     end 
 end 
+
+function add_point (x,y,color, l)
+	items[tostring(random(0, 0xffff))] = {"point",x,y,color,l} 
+end 
+
+function add_window (x,y,w,h,title,inside)
+	items[tostring(random(0, 0xffff))] = {"window", x,y,w,h,title,inside,false}
+	-- Last arg is if its dragged 
+end 
+
+function add_button (x,y,w,h,text,color,fcolor,onclick)
+	items[tostring(random(0, 0xffff))] = {"button", x,y,w,h,text,color,fcolor,onclick}
+end 
  
 function draw_wallpaper () 
     setcolor(0x800080)
@@ -213,18 +226,6 @@ function os_startup ()
     end 
 end 
  
-function add_point (x,y,color, l)
-	items[tostring(random(0, 0xffff))] = {"point",x,y,color,l} 
-end 
-
-function add_window (x,y,w,h,title,inside)
-	items[tostring(random(0, 0xffff))] = {"window", x,y,w,h,title,inside,false}
-	-- Last arg is if its dragged 
-end 
-
-function add_button (x,y,w,h,text,color,fcolor,onclick)
-	items[tostring(random(0, 0xffff))] = {"button", x,y,w,h,text,color,fcolor,onclick}
-end 
 
 function nowindow_drag()
 	-- disabless all window drags 
