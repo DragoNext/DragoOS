@@ -160,7 +160,7 @@ end
 function create_window_settings (x,y)
 	if settings_window_exists == true then -- forces only one window to exist 
 		delete_item()
-		settigns_window_id = settings_window_exists = false 
+		settings_window_exists = false 
 	end 
 	settigns_window_id = add_window(10,10,20,6,"Ustawienia",{{"rect",0,0,10,1,0xff0000}})  -- Fucking retarded me 
 	settings_window_exists = true 
