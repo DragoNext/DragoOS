@@ -138,7 +138,6 @@ end
 function add_point (x,y,color, l)
 	items[tostring(random(0, 0xffff))] = {"point",x,y,color,l} 
 end 
-end 
 
 function add_window (x,y,w,h,title,inside)
 	items[tostring(random(0, 0xffff))] = {"window", x,y,w,h,title,inside,false}
