@@ -103,6 +103,11 @@ rc_menuactive = false
 rc_x = 0
 rc_y = 0 
 
+settings_window_exists = false 
+settigns_window_id = 0 
+
+items_events = {} 
+
 ev_x_1 = false 
 local color_themes = {
 {0x00ff00,0x00ff00,0x00ff00}
@@ -126,8 +131,13 @@ function switch_buffering ()
     end 
 end 
 
+
+
+
+
 function add_point (x,y,color, l)
 	items[tostring(random(0, 0xffff))] = {"point",x,y,color,l} 
+end 
 end 
 
 function add_window (x,y,w,h,title,inside)
@@ -138,6 +148,10 @@ end
 function add_button (x,y,w,h,text,color,fcolor,onclick)
 	items[tostring(random(0, 0xffff))] = {"button", x,y,w,h,text,color,fcolor,onclick}
 end 
+
+function delete_item (itemid) 
+	items[itemid] = nil -- Logically it should just replace with value nil (But it removes entry ._. )  
+end 
  
 function draw_wallpaper () 
     setcolor(0x800080)
@@ -145,7 +159,13 @@ function draw_wallpaper ()
 end 
 
 function create_window_settings (x,y)
-	add_window(10,10,20,6,"Ustawienia",{{"rect",0,0,10,1,0xff0000}})  -- Fucking retarded me 
+	if settings_window_exists == true then -- forces only one window to exist 
+		delete_item()
+		settigns_window_id = settings_window_exists = false 
+	end 
+	settigns_window_id = add_window(10,10,20,6,"Ustawienia",{{"rect",0,0,10,1,0xff0000}})  -- Fucking retarded me 
+	settings_window_exists = true 
+	
 end 
  
 function draw_ui () 
@@ -255,6 +275,10 @@ add_event("touch",{155,47,6,6,exit_os})
 
 
 function draw_items () 
+	for _, event_id in pairs(items_events) do 
+		delete_event(event_id) 
+	end 
+	items_events = {} 
 	for _id ,vars in pairs(items) do
 		x = x + 1
 		types = vars[1]
