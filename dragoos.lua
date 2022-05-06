@@ -317,8 +317,15 @@ function set_drag (x,y)
 	end 
 end 
 
-
-
+function livetextupdate ()
+	for _id, vars in pairs(items) do 
+		if vars[1] == "window" then 
+			if vars[7][1] == "livetext" then 
+				vars[7][4] = vars[7][7] 
+			end
+		end 
+	end 
+end 
 
 add_event("touch",{0,47,6,6,set_uimenuactive})
 add_event("touch",{155,47,6,6,exit_os})
@@ -420,6 +427,8 @@ while (dragos_exit == false) do
 	
 	local start_time = os.time()
 	
+	
+	livetextupdate ()
 	draw_wallpaper() 
 	draw_items()
     draw_ui()
