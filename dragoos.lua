@@ -182,7 +182,7 @@ function create_window_settings (x,y)
 		-- repair it somehow ??? delete_item(settings_window_id)
 		settings_window_exists = false 
 	end 
-	settings_window_id = add_window(10,10,30,18,"Ustawienia",{{"text",0,0,"Ustawienia",0x000000,win_tsk_color},{"text",3,3,"Double Bufforowanie",0x000000,win_in_color},{"text",3,5,"Pokaz Czas",0x000000,win_in_color},{"text",3,7,"DragoOsTheme: Standard",0x000000,win_in_color},{"text",3,9,"Memory Used "..RAM_USED.."/"..RAM_SIZE,0x000000,win_in_color}})  -- Fucking retarded me 
+	settings_window_id = add_window(10,10,30,18,"Ustawienia",{{"text",0,0,"Ustawienia",0x000000,win_tsk_color},{"text",3,3,"Double Bufforowanie",0x000000,win_in_color},{"text",3,5,"Pokaz Czas",0x000000,win_in_color},{"text",3,7,"DragoOsTheme: Standard",0x000000,win_in_color},{"text",3,9,"RAM:",0x000000,win_in_color},{"livetext",6,9,"NONE",0x000000,win_in_color,RAM_USED}})  -- Fucking retarded me 
 	settings_window_exists = true 
 	set_uimenuactive(0,0)
 	
@@ -370,6 +370,11 @@ function draw_items ()
 				if tab[1] == "rect" then 
 					setcolor(tab[6])
 					gpu.fill(vars[2]+tab[2],vars[3]+tab[3],tab[4],tab[5]," ")
+				elseif tab[1] == "livetext" then 
+					tab[4] = tab[7] 
+					setcolor(tab[6])
+					fsetcolor(tab[5])
+					gpu.set(vars[2]+tab[2],vars[3]+tab[3],tab[4])
 				elseif tab[1] == "text" then 
 					setcolor(tab[6])
 					fsetcolor(tab[5])
