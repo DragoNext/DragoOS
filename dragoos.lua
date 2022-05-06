@@ -44,6 +44,21 @@
 -- Bugs:
 --  	Add_event causes  events.lua to not works [V] Repaired it :3 Also improved clearing vars when closing
 -- 
+-- To Do Long Term:
+--		Improve debugging if possible (Like man it's hard enough rn) 
+-- 		Improve Dragging speed 
+-- 		Add instalation
+--		
+-- To Do Short Term: 
+-- 		
+--		Add closing/minimizing mechanic to window item 
+--		Add window_minimized item window <--> window_minimized 
+--		Add icon item 
+--		Make settings menu 
+-- 		Make Basic app framework 
+--		Make icon system on desktop
+
+
 local gpu = require("component").gpu
 local internet = require("internet")
 local io = require("io")
@@ -104,7 +119,7 @@ rc_x = 0
 rc_y = 0 
 
 settings_window_exists = false 
-settigns_window_id = 0 
+settings_window_id = 0 
 
 items_events = {} 
 
@@ -133,14 +148,16 @@ end
 
 
 
-
+function add_icon (icon, text, onclick) 
+	items[tostring(random(0, 0xffff))] = {"icon", text, onclick}
+end 
 
 function add_point (x,y,color, l)
 	items[tostring(random(0, 0xffff))] = {"point",x,y,color,l} 
 end 
 
 function add_window (x,y,w,h,title,inside)
-	items[tostring(random(0, 0xffff))] = {"window", x,y,w,h,title,inside,false}
+	items[tostring(random(0, 0xffff))] = {"window", x,y,w,h,title,inside,{}}
 	-- Last arg is if its dragged 
 end 
 
@@ -148,22 +165,26 @@ function add_button (x,y,w,h,text,color,fcolor,onclick)
 	items[tostring(random(0, 0xffff))] = {"button", x,y,w,h,text,color,fcolor,onclick}
 end 
 
+
+
+
 function delete_item (itemid) 
 	items[itemid] = nil -- Logically it should just replace with value nil (But it removes entry ._. )  
 end 
  
 function draw_wallpaper () 
-    setcolor(0x800080)
+    setcolor(0x450a45)
     gpu.fill(0,-1,screen_xsize,screen_ysize+4,' ')
 end 
 
 function create_window_settings (x,y)
 	if settings_window_exists == true then -- forces only one window to exist 
-		delete_item()
+		-- repair it somehow ??? delete_item(settings_window_id)
 		settings_window_exists = false 
 	end 
-	settigns_window_id = add_window(10,10,20,6,"Ustawienia",{{"rect",0,0,10,1,0xff0000}})  -- Fucking retarded me 
+	settings_window_id = add_window(10,10,30,16,"Ustawienia",{{"text",0,0,"Ustawienia",0x000000,win_tsk_color},{"text",3,3,"Double Bufforowanie",0x000000,win_in_color},{"text",3,5,"Pokaz Czas",0x000000,win_in_color},{"text",3,7,"DragoOsTheme: Standard",0x000000,win_in_color}})  -- Fucking retarded me 
 	settings_window_exists = true 
+	set_uimenuactive(0,0)
 	
 end 
  
@@ -173,7 +194,7 @@ function draw_ui ()
     setcolor(0x00aa00)
     gpu.fill(0,screen_ysize-2,screen_xsize+1,screen_ysize+1," ") -- taskbar 
 	fsetcolor(0x000000)
-	setcolor(0x800080) --Wallpaper bottom color
+	setcolor(0x450a45) --Wallpaper bottom color
 	gpu.set(0,screen_ysize-3,string.rep("_",160))-- taskbar black shadow
     fsetcolor(0xffffff)
 	setcolor(0x0000ff) 
@@ -193,7 +214,7 @@ function draw_ui ()
 		gpu.set(12,screen_ysize-7,"Aplikacje")
 		gpu.set(0,screen_ysize-12,"_________________________________")
 		gpu.set(10,screen_ysize-10,"DragoAppStore")
-		ev_x_1 = add_event("touch",{0,screen_ysize-3,26,2,create_window_settings})
+		ev_x_1 = add_event("touch",{0,screen_ysize-5,33,3,create_window_settings})
 		fsetcolor(0xffffff)
     end 
 	if rc_menuactive == true then
@@ -211,17 +232,6 @@ function draw_ui ()
 	setcolor(0x00aa00)
 	gpu.set(screen_xsize-15,screen_ysize-1,tostring(os.date("%H:%M:%S")))
 	setcolor(0xff0000)
-end 
- 
-function create_window()
-	-- Windows args  
-	-- 0-1 > Position
-	-- 2-4 > Width,Height
-	-- 5 > Window Title  
-	table.insert(windows,{0,0,0,0,""})
-end 
- 
-function draw_windows ()
 end 
  
 function switch_buffer () 
@@ -246,14 +256,7 @@ function os_startup ()
 end 
  
 
-function nowindow_drag()
-	-- disabless all window drags 
-	for _id ,vars in pairs(items) do
-		if vars[1] == "window" then 
-			vars[8] = false 
-		end 
-	end 
-end 
+
 
 
 -- EVENTS 
@@ -267,20 +270,66 @@ function set_uimenuactive(x,y)
 	end     
 end 
 function exit_os(x,y);dragos_exit = true;end  
+
+
+event_drag_drag = nil 
+current_drag = nil 
+
+
+function dragging (x,y)
+	if current_drag ~= nil then
+		items[current_drag][2] = x 
+		items[current_drag][3] = y
+	end 
+end 
+
+function drag_drop (x, y)
+	if current_drag ~= nil then 
+		current_drag = nil 
+	end
+end 
+
+function set_drag (x,y)
+	for _id, vars in pairs(items) do 
+		if vars[1] == "window" then 
+			if checkcoord(x,y, vars[2], vars[3], vars[4]-1, 1) == true then
+				current_drag = _id 
+			elseif checkcoord(x,y, vars[2]+vars[4]-2, vars[3], 2, 1) == true then
+				delete_item(_id)
+			end 
+		end 
+	end 
+end 
+
+
+
+
 add_event("touch",{0,47,6,6,set_uimenuactive})
 add_event("touch",{155,47,6,6,exit_os})
+add_event("touch",{0,0,160,50,set_drag})
+
+
+add_event("drop",{0,0,160,50,drag_drop})
 
 
 
+
+
+
+-- Previous positions of window 
+window_prevpos = {} 
+-- Events on window (For moving window )
+window_events = {} 
+
+
+win_in_color = 0xefefef
+win_tsk_color = 0x5a5a5a
+win_ext_color = 0xfa0000
 
 function draw_items () 
-	for _, event_id in pairs(items_events) do 
-		delete_event(event_id) 
-	end 
-	items_events = {} 
 	for _id ,vars in pairs(items) do
-		x = x + 1
-		types = vars[1]
+		local x = x + 1
+		local types = vars[1]
 		if types == "point" then 
 			setcolor(vars[4])
 			gpu.set(vars[2],vars[3],vars[5])
@@ -291,26 +340,25 @@ function draw_items ()
 			gpu.set(vars[2],vars[3]+math.floor((vars[5]/2)-0.5),vars[6])
 			add_event("touch",{vars[2],vars[3],vars[4],vars[5],vars[9]})
 		elseif types == "window" then 
-			setcolor(0xefefef)
+			fsetcolor(0xffffff)
+			setcolor(win_in_color)
 			gpu.fill(vars[2],vars[3],vars[4],vars[5]," ")
-			setcolor(0x5a5a5a)
+			setcolor(win_tsk_color)
 			gpu.fill(vars[2],vars[3],vars[4],1," ")
 			gpu.set(vars[2],vars[3],vars[6])
-			setcolor(0xfa0000)
+			setcolor(win_ext_color)
 			gpu.set(vars[2]+vars[4]-1,vars[3],"X")
-			setcolor(0x00fa00)
-			gpu.set(vars[2]+vars[4]-2,vars[3],"-")
+			setcolor(win_tsk_color)
+			-- Removed minimizing not implementing it yet 
 			for _,tab in pairs(vars[7]) do  
-				
 				if tab[1] == "rect" then 
 					setcolor(tab[6])
 					gpu.fill(vars[2]+tab[2],vars[3]+tab[3],tab[4],tab[5]," ")
-				end
-				if tab[1] == "text" then 
+				elseif tab[1] == "text" then 
+					setcolor(tab[6])
 					fsetcolor(tab[5])
 					gpu.set(vars[2]+tab[2],vars[3]+tab[3],tab[4])
-				end
-				if tab[1] == "button" then 
+				elseif tab[1] == "button" then 
 					-- tab[1] -  x   {"button", x,y,w,h,text,color,fcolor,onclick}
 					setcolor(tab[7])
 					fsetcolor(tab[8]) 
@@ -325,12 +373,11 @@ function draw_items ()
 	end
 end 
 
-
 thread.create(event_loop):detach()
 
 function get_time()
-	H = tonumber(os.date("%H"))
-	M = tonumber(os.date("%M"))-40
+	local H = tonumber(os.date("%H"))
+	local M = tonumber(os.date("%M"))-40
 	if M > 60 then 
 		M = M - 60
 		H = H + 1
@@ -342,7 +389,6 @@ function get_time()
 end 
 
  
- 
 
 while (dragos_exit == false) do
 	if dragoos_double_buffering == true then 
@@ -353,13 +399,10 @@ while (dragos_exit == false) do
 	
 	draw_wallpaper() 
 	draw_items()
-    draw_windows() 
     draw_ui()
 	
 	
-	gpu.set(1,10,tostring(start_console))
 
-	
 	if start_console == true then
 		setcolor(0x006400)
 		gpu.fill(0,0,160,51," ") 
@@ -380,6 +423,7 @@ while (dragos_exit == false) do
 	gpu.bitblt(0, 0,0 ,screen_xsize, screen_ysize+1, dragoos_currentbuffer, 0, 0)
 	
     os.sleep(0)
+	
 end 
 gpu.freeBuffer(buffer_1)
 gpu.freeBuffer(buffer_2)

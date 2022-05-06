@@ -8,11 +8,7 @@ console_log = {}
 rc_menuactive = false 
 
 local function uuid()
-    local template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-    return string.gsub(template, '[xy]', function (c)
-        local v = (c == 'x') and math.random(0, 0xf) or math.random(8, 0xb)
-        return string.format('%x', v)
-    end)
+    return math.random(0x0000,0xffff)
 end
 
 
@@ -35,7 +31,7 @@ function add_event (event_type, args)
 	-- key_up
 	-- key_down
 	
-	_ID = uuid() 
+	local _ID = uuid() 
 	
 	event_list[_ID] = {event_type, args}
 	
@@ -57,17 +53,7 @@ end
 
 
 -- Check if coord is in 
-function checkcoord(cx,cy,x,y,w,h)
-	if (cx > x and cx < x+w) then 
-		if (cy > y and cy < y+h) then 
-			return true  
-		else 
-			return false 
-		end 
-	else
-		return false
-	end 
-end 
+function checkcoord(cx,cy,x,y,w,h);if (cx > x and cx < x+w) then ;if (cy >= y and cy < y+h) then ;return true  ;else ;return false ;end ;else;return false;end ;end 
 
 
 function event_loop()
@@ -88,18 +74,27 @@ function event_loop()
 			for _, event_ in pairs(event_list) do 
 				if event_[1] == "touch" then 
 					table.insert(events_touch, {event_[2][1],event_[2][2],event_[2][3],event_[2][4],event_[2][5]})
-				elseif event_[1] ==  "drag" then 
-					table.insert(events_touch, {event_[2][1],event_[2][2],event_[2][3],event_[2][4],event_[2][5]})
+				elseif event_[1] == "drag" then 
+					table.insert(events_drag, {event_[2][1],event_[2][2],event_[2][3],event_[2][4],event_[2][5]})
 				elseif event_[1] == "drop" then 
-				
+					table.insert(events_drop, {event_[2][1],event_[2][2],event_[2][3],event_[2][4],event_[2][5]})
 				end
 				
 			end 
 		end 
 	
 		type_, adress_, x,y, button, username = event.pull() -- Lastest event 
-		
-		if  type_ == "touch" then 
+		if type_ == "drag" and current_drag == nil then 
+			type_, adress_, x,y, button, username = event.pull() 
+			if type_ == "drag" and current_drag == nil then 
+				type_, adress_, x,y, button, username = event.pull() 
+				if type_ == "drag" and current_drag == nil then 
+					type_, adress_, x,y, button, username = event.pull() 
+				end 
+			end 
+		end 
+	
+		if type_ == "touch" then 
 			if button == 0.0 then 
 				if rc_menuactive == true then 
 					rc_menuactive = false 
@@ -110,10 +105,6 @@ function event_loop()
 				else 
 					color = 0x4B0082
 				end 
-
-				-- add_window(x,y,10,10,"Test",{{"rect",1,1,2,2,0x0000ff},{"text",1,1,"Info",0x000000}})
-
-
 				for _, ev in pairs(events_touch)  do 
 					if ev ~= nil then 
 						if (checkcoord(x,y,ev[1],ev[2],ev[3],ev[4]) == true) then  
@@ -121,12 +112,7 @@ function event_loop()
 						end
 					end 
 				end 
-				
-				
-
-			
 			else 
-				
 				if y < 49 then 
 					rc_x = x  
 					rc_y = y
@@ -134,10 +120,8 @@ function event_loop()
 						rc_menuactive = true 
 					end 
 				end
-			end 
-			
+			end 		
 		elseif type_ == "key_up" then 
-			-- add_point(12,1,0x000000,tostring(type_, adress_, x,y, button, username))
 			if x == 47 then 
 				if start_console == false then 
 					console = "" 
@@ -145,14 +129,13 @@ function event_loop()
 				else 
 					start_console = false 
 				end 
-				
 			elseif start_console == true then 
 				if x > 31 then 
 					console = console .. string.char(x)
 				elseif x == 8 then 
 					console = console:sub(1,-2)
 				elseif x == 13 then 
-					command = load(console) 
+					command = load(console)
 					_,console_return = pcall(command) 
 					if type(console_return) == "table" then
 						crt = ""
@@ -166,11 +149,15 @@ function event_loop()
 					console = "" 
 				end 
 			end 
-			
+		elseif type_ == "drop" then 
+			if current_drag ~= nil then 
+				drag_drop(x, y)
+			end
 		elseif type_ == "drag" then 
-		
+			if current_drag ~= nil then 
+				dragging(x, y)
+			end 
 		end 
-		
 	end 
 	-- Cleans global vars 
 	events_touch = {}
@@ -178,3 +165,5 @@ function event_loop()
 	events_drop = {} 
 	events_list = {}
 end 
+
+
