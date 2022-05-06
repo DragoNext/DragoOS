@@ -56,9 +56,11 @@ end
 function checkcoord(cx,cy,x,y,w,h);if (cx > x and cx < x+w) then ;if (cy >= y and cy < y+h) then ;return true  ;else ;return false ;end ;else;return false;end ;end 
 
 
+
+
+
 function event_loop()
 	-- to do - Move Click into this 
-	
 	events_touch = {}
 	events_drag =  {}
 	events_drop = {} 
@@ -149,6 +151,7 @@ function event_loop()
 					console = "" 
 				end 
 			end 
+		-- For now drop and drag events are direct as it impacts direct perfomance of os :<
 		elseif type_ == "drop" then 
 			if current_drag ~= nil then 
 				drag_drop(x, y)

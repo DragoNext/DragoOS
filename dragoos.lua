@@ -157,7 +157,7 @@ function add_point (x,y,color, l)
 end 
 
 function add_window (x,y,w,h,title,inside)
-	items[tostring(random(0, 0xffff))] = {"window", x,y,w,h,title,inside,{}}
+	items[tostring(random(0, 0xffff))] = {"window", x,y,w,h,title,inside,{},{}}
 	-- Last arg is if its dragged 
 end 
 
@@ -182,7 +182,7 @@ function create_window_settings (x,y)
 		-- repair it somehow ??? delete_item(settings_window_id)
 		settings_window_exists = false 
 	end 
-	settings_window_id = add_window(10,10,30,16,"Ustawienia",{{"text",0,0,"Ustawienia",0x000000,win_tsk_color},{"text",3,3,"Double Bufforowanie",0x000000,win_in_color},{"text",3,5,"Pokaz Czas",0x000000,win_in_color},{"text",3,7,"DragoOsTheme: Standard",0x000000,win_in_color}})  -- Fucking retarded me 
+	settings_window_id = add_window(10,10,30,18,"Ustawienia",{{"text",0,0,"Ustawienia",0x000000,win_tsk_color},{"text",3,3,"Double Bufforowanie",0x000000,win_in_color},{"text",3,5,"Pokaz Czas",0x000000,win_in_color},{"text",3,7,"DragoOsTheme: Standard",0x000000,win_in_color},{"text",3,9,"Memory Used "..RAM_USED.."/"..RAM_SIZE,0x000000,win_in_color}})  -- Fucking retarded me 
 	settings_window_exists = true 
 	set_uimenuactive(0,0)
 	
@@ -296,6 +296,22 @@ function set_drag (x,y)
 				current_drag = _id 
 			elseif checkcoord(x,y, vars[2]+vars[4]-2, vars[3], 2, 1) == true then
 				delete_item(_id)
+			else 
+				for _, v in pairs(vars[9]) do -- Other Events on window like check buttons etc 
+					-- Basicaly structure is like that:
+					-- {X,Y,W,H, EVENT_FUNCTION, EVENT_STATE)
+					--
+					-- Event function 
+					-- event (x , y)
+					--  x - Self assosciation (_id) of whole window 
+					--  y - Event state
+					--
+					-- So to change event state inside do: items[x][9][6] = NEW_EVENT_STATE 
+					--
+					if checkcoord(x,y, v[1], v[2], v[3], v[4]) == true then 
+						v[5](_id,v[6]) 
+					end 
+				end 
 			end 
 		end 
 	end 
@@ -363,10 +379,9 @@ function draw_items ()
 					setcolor(tab[7])
 					fsetcolor(tab[8]) 
 					gpu.fill()
-				end	
-				--if tab[1] == "checkbox" then 
+				if tab[1] == "checkbox" then 
 					-- add_event("touch",{vars[2]+tab[2],vars[3]+tab[3],1,1,ACTIVATED_EVENT})
-				--end 
+				end 
 			end
 			
 		end 
@@ -389,6 +404,8 @@ function get_time()
 end 
 
  
+RAM_SIZE = tostring(computer.totalMemory()/1024/1024)
+RAM_USED = tostring((computer.totalMemory()-computer.freeMemory())/1024/1024)
 
 while (dragos_exit == false) do
 	if dragoos_double_buffering == true then 
@@ -421,7 +438,7 @@ while (dragos_exit == false) do
 	
 	
 	gpu.bitblt(0, 0,0 ,screen_xsize, screen_ysize+1, dragoos_currentbuffer, 0, 0)
-	
+	RAM_USED = tostring((computer.totalMemory()-computer.freeMemory())/1024/1024)
     os.sleep(0)
 	
 end 
