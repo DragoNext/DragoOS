@@ -321,7 +321,7 @@ function livetextupdate ()
 	for _id, vars in pairs(items) do 
 		if vars[1] == "window" then 
 			if vars[7][1] == "livetext" then 
-				vars[7][4] = vars[7][7] 
+				vars[7][4] = RAM_USED
 			end
 		end 
 	end 
