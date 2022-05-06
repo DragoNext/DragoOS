@@ -438,9 +438,9 @@ while (dragos_exit == false) do
 	
 	
 	gpu.bitblt(0, 0,0 ,screen_xsize, screen_ysize+1, dragoos_currentbuffer, 0, 0)
-	RAM_USED = tostring((computer.totalMemory()-computer.freeMemory())/1024/1024)
-    os.sleep(0)
+	os.sleep(0)
 	
+	RAM_USED = tostring((computer.totalMemory()-computer.freeMemory())/1024/1024)
 end 
 gpu.freeBuffer(buffer_1)
 gpu.freeBuffer(buffer_2)
