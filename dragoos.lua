@@ -278,6 +278,7 @@ current_drag = nil
 
 function dragging (x,y)
 	if current_drag ~= nil then
+	
 		items[current_drag][2] = x 
 		items[current_drag][3] = y
 	end 
@@ -291,8 +292,11 @@ end
 
 function set_drag (x,y)
 	for _id, vars in pairs(items) do 
+		x_c = 0 
 		if vars[1] == "window" then 
+			x_c = x_c + 1 
 			if checkcoord(x,y, vars[2], vars[3], vars[4]-1, 1) == true then
+				table.insert(items, 1, table.remove(items, x_c)) -- Moves window to top ?
 				current_drag = _id 
 			elseif checkcoord(x,y, vars[2]+vars[4]-2, vars[3], 2, 1) == true then
 				delete_item(_id)
