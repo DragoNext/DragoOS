@@ -63,6 +63,7 @@ local gpu = require("component").gpu
 local internet = require("internet")
 local io = require("io")
 local event = require("event")
+local computer = require("computer")
 local thread = require("thread")
 local banned_player = {"Majkaaa"}
 local modules_list = {}
@@ -296,7 +297,7 @@ function set_drag (x,y)
 		if vars[1] == "window" then 
 			x_c = x_c + 1 
 			if checkcoord(x,y, vars[2], vars[3], vars[4]-1, 1) == true then
-				table.insert(items, #items, table.remove(items, x_c)) -- Moves window to top ?
+				table.insert(items, #items-1, table.remove(items, x_c)) -- Moves window to top ?
 				current_drag = _id 
 			elseif checkcoord(x,y, vars[2]+vars[4]-2, vars[3], 2, 1) == true then
 				delete_item(_id)
