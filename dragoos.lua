@@ -292,7 +292,7 @@ end
 
 function set_drag (x,y)
 	for _id, vars in pairs(items) do 
-		x_c = 0 
+		local x_c = 0 
 		if vars[1] == "window" then 
 			x_c = x_c + 1 
 			if checkcoord(x,y, vars[2], vars[3], vars[4]-1, 1) == true then
@@ -306,8 +306,7 @@ function set_drag (x,y)
 					-- {X,Y,W,H, EVENT_FUNCTION, EVENT_STATE)
 					--
 					-- Event function 
-					-- event (x , y)
-					--  x - Self assosciation (_id) of whole window 
+					-- event (x , y)up
 					--  y - Event state
 					--
 					-- So to change event state inside do: items[x][9][6] = NEW_EVENT_STATE 
