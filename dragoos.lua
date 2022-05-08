@@ -43,6 +43,7 @@
 --                                                      ████████
 -- Bugs:
 --  	Add_event causes  events.lua to not works [V] Repaired it :3 Also improved clearing vars when closing
+--		Fix propagation of items (window on top) 
 -- 
 -- To Do Long Term:
 --		Improve debugging if possible (Like man it's hard enough rn) 
@@ -68,10 +69,10 @@ local thread = require("thread")
 local banned_player = {"Majkaaa"}
 local modules_list = {}
 modules_list["charset"] = "nVf9B9dQ"
-modules_list["events"] = "" -- Not added to pastebin yett
+modules_list["events"] = "" -- Not added to pastebin yett (as still developed
 items = {}  
 console = ""
-random = math.random -- Fuck math isnt imported globally
+random = math.random -- math isnt imported globally
 
 
 
@@ -90,7 +91,7 @@ end
 function _load_module (mod)
 	dofile("/home/"..mod..".lua")
 end 
-
+ASASASASA
 function install_module (mod)
 	if pcall(_load_module, mod) then 
 		-- Installed module mod
@@ -230,9 +231,12 @@ function draw_ui ()
 		end 
 		fsetcolor(0xffffff)
 	end 
-	setcolor(0x00aa00)
-	gpu.set(screen_xsize-15,screen_ysize-1,tostring(os.date("%H:%M:%S")))
-	setcolor(0xff0000)
+	
+	if show_time == true then 
+		setcolor(0x00aa00)
+		gpu.set(screen_xsize-15,screen_ysize-1,tostring(os.date("%H:%M:%S")))
+		setcolor(0xff0000)
+	end 
 end 
  
 function switch_buffer () 
@@ -273,6 +277,8 @@ end
 function exit_os(x,y);dragos_exit = true;end  
 
 
+
+
 event_drag_drag = nil 
 current_drag = nil 
 
@@ -291,20 +297,28 @@ function drag_drop (x, y)
 	end
 end 
 
+function settings_showtime(x,y)
+	items[x][9][6] = not y -- switch event state 
+	show_time = not y 
+end 
+
 function set_drag (x,y)
 	for _id, vars in pairs(items) do 
 		local x_c = 0 
 		if vars[1] == "window" then 
 			x_c = x_c + 1 
 			if checkcoord(x,y, vars[2], vars[3], vars[4]-1, 1) == true then
-				if #items >= 2 then -- Check if there is need for propagation
-					table.insert(items, #items, table.remove(items, x_c)) -- Moves window to top ?
-				end 
+				table.insert(items, #items, table.remove(items, x_c)) -- Moves window to top ? (Dosent currently wqork)
 				current_drag = _id 
 			elseif checkcoord(x,y, vars[2]+vars[4]-2, vars[3], 2, 1) == true then
 				delete_item(_id)
 			else 
-				for _, v in pairs(vars[9]) do -- Other Events on window like check buttons etc 
+				for _, v in pairs(vars[9]) do -- Other Events on window like check buttons etc   vars[9] == Items inside windows 
+					-- AS THIS POOLS (V) WHICH ARE SINGLE INSIDE ITEMS.
+				
+					-- TO DO 
+					-- FIGURE OUT IF IT EVEN WORKS 
+				
 					-- Basicaly structure is like that:
 					-- {X,Y,W,H, EVENT_FUNCTION, EVENT_STATE)
 					--
@@ -397,8 +411,12 @@ function draw_items ()
 					setcolor(tab[7])
 					fsetcolor(tab[8]) 
 					gpu.fill()
-				elseif tab[1] == "checkbox" then -- Me A dumbass
-					-- add_event("touch",{vars[2]+tab[2],vars[3]+tab[3],1,1,ACTIVATED_EVENT})
+				elseif tab[1] == "checkbox" then 
+					if tab[6] == true then
+						gpu.set(vars[2]+tab[2],vars[3]+tab[3],"V")
+					else 
+						gpu.set(vars[2]+tab[2],vars[3]+tab[3],"X")
+					end 
 				end 
 				
 			end
