@@ -91,7 +91,7 @@ end
 function _load_module (mod)
 	dofile("/home/"..mod..".lua")
 end 
-ASASASASA
+
 function install_module (mod)
 	if pcall(_load_module, mod) then 
 		-- Installed module mod
